@@ -239,9 +239,8 @@ def logsumexp(input: Tensor, dim: int) -> Tensor:
             NOTE: minitorch functions/tensor functions typically keep dimensions if you provide a dimensions.
     """  
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError
+    return np.log(np.sum(np.exp(input), axis=dim, keepdims=True))
     ### END YOUR SOLUTION
-
 
 
 
@@ -259,6 +258,9 @@ def softmax_loss(logits: Tensor, target: Tensor) -> Tensor:
     """
     result = None
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError
+    batch_size, num_classes = logits.shape
+    targets = one_hot(target, num_classes=num_classes)
+    log_sums = logsumexp(logits, dim=1)
+    result = log_sums - targets
     ### END YOUR SOLUTION
     return result.view(batch_size, )
