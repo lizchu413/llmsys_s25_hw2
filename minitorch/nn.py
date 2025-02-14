@@ -260,7 +260,7 @@ def softmax_loss(logits: Tensor, target: Tensor) -> Tensor:
     ### BEGIN YOUR SOLUTION
     batch_size, num_classes = logits.shape
     targets = one_hot(target, num_classes=num_classes)
-    log_sums = logsumexp(logits, dim=1)
+    log_sums = logsumexp(logits, dim=0)
     print(f"targets shape: {targets.shape} log_sums shape: {log_sums.shape}")
     result = log_sums - targets
     ### END YOUR SOLUTION
