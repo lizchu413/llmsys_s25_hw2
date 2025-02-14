@@ -239,7 +239,7 @@ def logsumexp(input: Tensor, dim: int) -> Tensor:
             NOTE: minitorch functions/tensor functions typically keep dimensions if you provide a dimensions.
     """  
     ### BEGIN YOUR SOLUTION
-    return np.log(np.sum(np.exp(input), axis=dim, keepdims=True))
+    return input.exp().sum(dim=dim).log()
     ### END YOUR SOLUTION
 
 
