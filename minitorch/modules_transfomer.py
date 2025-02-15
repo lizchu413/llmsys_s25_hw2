@@ -121,8 +121,7 @@ class MultiHeadAttention(Module):
         q, kT, v = self.project_to_query_key_value(x)
         if self.causal:
             mask = self.create_causal_mask(seq_len)
-            q = q.masked_fill(mask, -np.inf) # Apply mask to the query
-            # or scores = scores + mask  (if your mask is 0 and -inf)
+            q = q * mask
         attn_output = self.self_attention(q, kT, v)
         # Concatenate heads and project
         attn_output = attn_output.transpose(1, 2).reshape(batch_size, seq_len, n_embd)
