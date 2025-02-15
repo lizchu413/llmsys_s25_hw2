@@ -45,12 +45,11 @@ class MultiHeadAttention(Module):
         self.attn_hidden_dim = n_embd // n_head
 
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError
-        # self.q_projection = 
-        # self.k_projection = 
-        # self.v_projection = 
-        # self.out_projection = 
-        # self.dropout = 
+        self.q_projection = Linear(n_embd, n_embd, bias=bias, backend=backend)
+        self.k_projection = Linear(n_embd, n_embd, bias=bias, backend=backend)
+        self.v_projection = Linear(n_embd, n_embd, bias=bias, backend=backend)
+        self.out_projection = Linear(n_embd, n_embd, bias=bias, backend=backend)
+        self.dropout = Dropout(p_dropout)
         ### END YOUR SOLUTION
 
     def create_causal_mask(self, seq_len):
@@ -71,7 +70,10 @@ class MultiHeadAttention(Module):
         """
         batch_size, seq_len, n_embd = x.shape
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError
+        q = self.q_projection(x)
+        k = self.k_projection(x)
+        v = self.v_projection(x)
+        kT = k.transpose(2, 3)
         ### END YOUR SOLUTION
         return q, kT, v
     
@@ -97,7 +99,10 @@ class MultiHeadAttention(Module):
         result = None
         
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError
+        scores = q @ kT / (q_dim ** 0.5)
+        scores = softmax(scores, dim=v_dim)
+        scores = self.dropout(scores)
+        result = scores @ v
         ### END YOUR SOLUTION
 
         return result
@@ -113,7 +118,17 @@ class MultiHeadAttention(Module):
         """
         batch_size, seq_len, n_embd = x.shape
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError
+        q, kT, v = self.project_to_query_key_value(x)
+        if self.causal:
+            mask = self.create_causal_mask(seq_len)
+            q = q.masked_fill(mask, -np.inf) # Apply mask to the query
+            # or scores = scores + mask  (if your mask is 0 and -inf)
+        attn_output = self.self_attention(q, kT, v)
+        # Concatenate heads and project
+        attn_output = attn_output.transpose(1, 2).reshape(batch_size, seq_len, n_embd)
+        output = self.out_projection(attn_output)
+        output = self.dropout(output)
+        return output
         ### END YOUR SOLUTION
 
 
