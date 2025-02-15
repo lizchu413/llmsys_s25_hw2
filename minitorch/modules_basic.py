@@ -98,10 +98,10 @@ class Linear(Module):
         self.out_size = out_size
         ### BEGIN YOUR SOLUTION
         self.in_size = in_size
-        weights = np.random.rand(in_size, out_size) * 2 / np.sqrt(in_size) - 1 / np.sqrt(in_size)
-        self.weights = Parameter(tensor_from_numpy(weights, backend=backend))
+        a, b = 2 / np.sqrt(in_size), 1 / np.sqrt(in_size)
+        self.weights = Parameter(rand((in_size, out_size), backend=backend) * a - b)
         if bias:
-            bias_tensor = tensor_from_numpy(np.random.rand(out_size).reshape(-1, ) * 2 / np.sqrt(out_size) - 1 / np.sqrt(out_size), backend=backend)
+            bias_tensor = rand((out_size, ), backend=backend) * a - b
         else:
             bias_tensor = zeros_tensor_from_numpy((out_size,), backend=backend)
         self.bias = Parameter(bias_tensor)
