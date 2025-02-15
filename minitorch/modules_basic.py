@@ -48,7 +48,7 @@ class Embedding(Module):
         bs, seq_len = x.shape
         ### BEGIN YOUR SOLUTION
         word_idx = one_hot(x, self.num_embeddings)
-        return word_idx @ self.weights.value
+        return word_idx @ (zeros((bs, self.num_embeddings, self.embedding_dim), backend=self.backend) + self.weights.value)
         ### END YOUR SOLUTION
 
     
