@@ -121,8 +121,8 @@ class Linear(Module):
         self.in_size = in_size
         weights = np.random.rand(in_size, out_size) * 2 / np.sqrt(in_size) - 1 / np.sqrt(in_size)
         self.weights = Parameter(tensor(weights, backend=backend))
-        bias_vals =  np.random.rand(out_size, ) * 2 / np.sqrt(out_size) - 1 / np.sqrt(out_size) if bias else np.zeros(out_size).reshape(-1, )
-        self.bias = Parameter(tensor(bias_vals, backend=backend))
+        bias_vals =  np.random.rand(out_size, 1) * 2 / np.sqrt(out_size) - 1 / np.sqrt(out_size) if bias else np.zeros(out_size, 1)
+        self.bias = Parameter(tensor(bias_vals.reshape(-1, 1), backend=backend))
         ### END YOUR SOLUTION
 
     def forward(self, x: Tensor):
