@@ -71,36 +71,12 @@ class Dropout(Module):
             output : Tensor of shape (*)
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError
+        if not self.training or self.p_dropout == 0:
+            return x
+        idxes = np.random.binomial(1, self.p_dropout, size=x.shape)
+        return x * idxes
         ### END YOUR SOLUTION
 
-'''
-class Linear(minitorch.Module):
-    def __init__(self, in_size, out_size):
-        super().__init__()
-
-        # BEGIN ASSIGN1_3
-        # 1. Initialize self.weights to be a random parameter of (in_size, out_size).
-        # 2. Initialize self.bias to be a random parameter of (out_size)
-        # 3. Set self.out_size to be out_size
-        # HINT: make sure to use the RParam function
-        self.in_size = in_size
-        self.weights = RParam(in_size, out_size)
-        self.bias = RParam(out_size)
-        self.out_size = out_size
-        # END ASSIGN1_3
-
-    def forward(self, x):
-        # BEGIN ASSIGN1_3
-        # 1. Reshape the input x to be of size (batch, in_size)
-        # 2. Reshape self.weights to be of size (in_size, self.out_size)
-        # 3. Apply Matrix Multiplication on input x and self.weights, and reshape the output to be of size (batch, self.out_size)
-        # 4. Add self.bias
-        # HINT: You can use the view function of minitorch.tensor for reshape
-        res = x @ self.weights.value + self.bias.value
-        return res
-        # END ASSIGN1_3
-'''
 
 class Linear(Module):
     def __init__(self, in_size: int, out_size: int, bias: bool, backend: TensorBackend):
