@@ -153,5 +153,8 @@ class LayerNorm1d(Module):
         """
         batch, dim = x.shape
         ### BEGIN YOUR SOLUTION
-        return x
+        mean = x.mean(dim=1)
+        var = ((x - mean) ** 2).mean(dim=1)
+        x_norm = (x - mean) / (var + self.eps) ** 0.5
+        return x_norm * self.weights.value + self.bias.value
         ### END YOUR SOLUTION
