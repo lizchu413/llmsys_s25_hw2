@@ -33,7 +33,7 @@ class Embedding(Module):
         self.num_embeddings = num_embeddings # Vocab size
         self.embedding_dim  = embedding_dim  # Embedding Dimension
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError
+        self.weights = Parameter(rand((num_embeddings, embedding_dim), backend=backend))
         ### END YOUR SOLUTION
     
     def forward(self, x: Tensor):
@@ -47,7 +47,8 @@ class Embedding(Module):
         """
         bs, seq_len = x.shape
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError
+        word_idx = one_hot(x, self.num_embeddings)
+        return word_idx @ self.weights.value
         ### END YOUR SOLUTION
 
     
