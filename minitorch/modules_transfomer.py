@@ -71,9 +71,9 @@ class MultiHeadAttention(Module):
         batch_size, seq_len, n_embd = x.shape
         x_flat = x.view(batch_size * seq_len, n_embd)
         ### BEGIN YOUR SOLUTION
-        q = self.q_projection(x_flat).view(batch_size, seq_len, self.n_head, self.attn_hidden_dim)
-        k = self.k_projection(x_flat).view(batch_size, seq_len, self.n_head, self.attn_hidden_dim)
-        v = self.v_projection(x_flat).view(batch_size, seq_len, self.n_head, self.attn_hidden_dim)
+        q = self.q_projection(x_flat).view(batch_size, self.n_head, seq_len, self.attn_hidden_dim)
+        k = self.k_projection(x_flat).view(batch_size, self.n_head, seq_len, self.attn_hidden_dim)
+        v = self.v_projection(x_flat).view(batch_size, self.n_head, seq_len, self.attn_hidden_dim)
         k_numpy = k.to_numpy()
         print(f"k_numpy shape: {k_numpy.shape}")
         k_numpy_t = np.moveaxis(k_numpy, -1, -2)
