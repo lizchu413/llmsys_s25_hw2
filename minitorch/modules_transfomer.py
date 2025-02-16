@@ -105,7 +105,7 @@ class MultiHeadAttention(Module):
         scores = q @ kT / (q_dim ** 0.5)
         scores = softmax(scores, dim=3)
         scores = self.dropout(scores)
-        result = scores @ v
+        result = scores * v
         print(f"result shape: {result.shape}")
         print(f"^^ this should be ({batch_size}, {queries_len}, {num_head * q_dim})")
         ### END YOUR SOLUTION
