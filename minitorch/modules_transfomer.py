@@ -125,6 +125,7 @@ class MultiHeadAttention(Module):
         print(f"batch_size: {batch_size}, seq_len: {seq_len}, n_embd: {n_embd}")
         if self.causal:
             mask = self.create_causal_mask(seq_len)
+            print(f"shape of mask: {mask.shape}")
             q = q * mask
         print(f"q shape: {q.shape}, kT shape: {kT.shape}, v {v.shape}")
         attn_output = self.self_attention(q, kT, v)
