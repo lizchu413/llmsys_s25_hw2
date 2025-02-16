@@ -74,9 +74,8 @@ class MultiHeadAttention(Module):
         q = self.q_projection(x_flat).view(batch_size, self.n_head, seq_len, self.attn_hidden_dim)
         k = self.k_projection(x_flat).view(batch_size, self.n_head, seq_len, self.attn_hidden_dim)
         v = self.v_projection(x_flat).view(batch_size, self.n_head, seq_len, self.attn_hidden_dim)
-        k_numpy = k.to_numpy()
-        k_numpy_t = np.moveaxis(k_numpy, -1, -2)
-        kT = tensor_from_numpy(k_numpy_t, backend=self.backend, requires_grad=x.requires_grad())
+        kT = self.k_projection(x_flat).view(batch_size, self.n_head, seq_len, self.attn_hidden_dim)
+        kT = kT.permute(0, 1, 3, 2)
         ### END YOUR SOLUTION
         return q, kT, v
     
