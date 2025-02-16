@@ -197,8 +197,7 @@ class Scalar:
                                    (typically left out, and assumed to be 1.0).
         """
         if d_output is None:
-            # d_output = 1.0
-            d_output = 0.0
+            d_output = 1.0
         backpropagate(self, d_output)
 
 
