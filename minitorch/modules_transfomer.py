@@ -103,6 +103,7 @@ class MultiHeadAttention(Module):
         
         ### BEGIN YOUR SOLUTION
         scores = q @ kT / (q_dim ** 0.5)
+        print(f"scores shape: {scores.shape} v_dim: {v_dim}")
         scores = softmax(scores, dim=v_dim)
         scores = self.dropout(scores)
         result = scores @ v
