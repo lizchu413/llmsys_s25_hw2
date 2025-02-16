@@ -124,28 +124,17 @@ class MultiHeadAttention(Module):
         batch_size, seq_len, n_embd = x.shape
         ### BEGIN YOUR SOLUTION
         q, kT, v = self.project_to_query_key_value(x)
-        print(f"batch_size: {batch_size}, seq_len: {seq_len}, n_embd: {n_embd}")
-        print(f"q shape: {q.shape}, kT shape: {kT.shape}, v {v.shape}")
         if self.causal:
             mask = self.create_causal_mask(seq_len)
         else:
             mask = None
         attn_output = self.self_attention(q, kT, v, mask=mask)
-        print(f"attn_output shape: {attn_output.shape}")
         # Concatenate heads and project
         attn_output = attn_output.permute(1, 0, 2)
 
-        # attn_output_numpy = attn_output.to_numpy()
-        # attn_output_numpy_t = np.moveaxis(attn_output_numpy, -2, -3)
-        # attn_output_t = tensor_from_numpy(attn_output_numpy_t, backend=self.backend, requires_grad=x.requires_grad())
-        # attn_output = attn_output_t.contiguous().view(batch_size, seq_len, n_embd)
-
-        print(f"attn_output shape (new): {attn_output.shape}")
         attn_flat = attn_output.contiguous().view(batch_size * seq_len, n_embd)
         output = self.out_projection(attn_flat)
-        print(f"out projection shape: {output.shape}")
         output = self.dropout(output)
-        print(f"out dropout shape: {output.shape}")
         output = output.view(batch_size, seq_len, n_embd)
         return output
         ### END YOUR SOLUTION
