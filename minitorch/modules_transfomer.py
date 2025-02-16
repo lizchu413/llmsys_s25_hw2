@@ -125,9 +125,9 @@ class MultiHeadAttention(Module):
         q, kT, v = self.project_to_query_key_value(x)
         print(f"batch_size: {batch_size}, seq_len: {seq_len}, n_embd: {n_embd}")
         if self.causal:
-            # mask = self.create_causal_mask(seq_len)
+            mask = self.create_causal_mask(seq_len)
             # print(f"shape of mask: {mask.shape}")
-            # q = q * mask
+            q = q * mask
             # Returns a 1x1xTxT triangular causal mask for Q @ K^T (You will implicitly broadcast it to BxHxTxT)
             pass
         print(f"q shape: {q.shape}, kT shape: {kT.shape}, v {v.shape}")
