@@ -75,6 +75,7 @@ class MultiHeadAttention(Module):
         k = self.k_projection(x_flat).view(batch_size, seq_len, self.n_head, self.attn_hidden_dim)
         v = self.v_projection(x_flat).view(batch_size, seq_len, self.n_head, self.attn_hidden_dim)
         k_numpy = k.to_numpy()
+        print(f"k_numpy shape: {k_numpy.shape}")
         k_numpy_t = k_numpy.transpose(2, 3)
         kT = tensor_from_numpy(k_numpy_t, backend=self.backend)
         ### END YOUR SOLUTION
