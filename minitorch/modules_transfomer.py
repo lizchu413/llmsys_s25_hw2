@@ -76,7 +76,7 @@ class MultiHeadAttention(Module):
         v = self.v_projection(x_flat).view(batch_size, self.n_head, seq_len, self.attn_hidden_dim)
         k_numpy = k.to_numpy()
         k_numpy_t = np.moveaxis(k_numpy, -1, -2)
-        kT = tensor_from_numpy(k_numpy_t, backend=self.backend)
+        kT = tensor_from_numpy(k_numpy_t, backend=self.backend, requires_grad=x.requires_grad())
         ### END YOUR SOLUTION
         return q, kT, v
     
@@ -137,7 +137,7 @@ class MultiHeadAttention(Module):
         # Concatenate heads and project
         attn_output_numpy = attn_output.to_numpy()
         attn_output_numpy_t = np.moveaxis(attn_output_numpy, -2, -3)
-        attn_output_t = tensor_from_numpy(attn_output_numpy_t, backend=self.backend)
+        attn_output_t = tensor_from_numpy(attn_output_numpy_t, backend=self.backend, requires_grad=x.requires_grad())
         attn_output = attn_output_t.contiguous().view(batch_size, seq_len, n_embd)
         print(f"attn_output shape (new): {attn_output.shape}")
         attn_flat = attn_output.contiguous().view(batch_size * seq_len, n_embd)
