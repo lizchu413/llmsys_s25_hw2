@@ -69,10 +69,11 @@ class MultiHeadAttention(Module):
             V   : The Value Matrix (batch_size x num_heads x seq_len x attn_hidden_dim)
         """
         batch_size, seq_len, n_embd = x.shape
+        x_flat = x.view(batch_size * seq_len, n_embd)
         ### BEGIN YOUR SOLUTION
-        q = self.q_projection(x).view(batch_size, seq_len, self.n_head, self.attn_hidden_dim)
-        k = self.k_projection(x).view(batch_size, seq_len, self.n_head, self.attn_hidden_dim)
-        v = self.v_projection(x).view(batch_size, seq_len, self.n_head, self.attn_hidden_dim)
+        q = self.q_projection(x_flat).view(batch_size, seq_len, self.n_head, self.attn_hidden_dim)
+        k = self.k_projection(x_flat).view(batch_size, seq_len, self.n_head, self.attn_hidden_dim)
+        v = self.v_projection(x_flat).view(batch_size, seq_len, self.n_head, self.attn_hidden_dim)
         kT = k.transpose(2, 3)
         ### END YOUR SOLUTION
         return q, kT, v
