@@ -133,8 +133,13 @@ class MultiHeadAttention(Module):
         attn_output = self.self_attention(q, kT, v, mask=mask)
         print(f"attn_output shape: {attn_output.shape}")
         # Concatenate heads and project
-        attn_output = attn_output.permute(0, 2, 1, 3)
-        attn_output = attn_output.view(batch_size, seq_len, n_embd)
+        attn_output = attn_output.permute(1, 0, 2)
+
+        # attn_output_numpy = attn_output.to_numpy()
+        # attn_output_numpy_t = np.moveaxis(attn_output_numpy, -2, -3)
+        # attn_output_t = tensor_from_numpy(attn_output_numpy_t, backend=self.backend, requires_grad=x.requires_grad())
+        # attn_output = attn_output_t.contiguous().view(batch_size, seq_len, n_embd)
+
         print(f"attn_output shape (new): {attn_output.shape}")
         attn_flat = attn_output.contiguous().view(batch_size * seq_len, n_embd)
         output = self.out_projection(attn_flat)
