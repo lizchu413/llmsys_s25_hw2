@@ -138,7 +138,7 @@ class MultiHeadAttention(Module):
         attn_output_numpy = attn_output.to_numpy()
         attn_output_numpy_t = np.moveaxis(attn_output_numpy, -2, -3)
         attn_output_t = tensor_from_numpy(attn_output_numpy_t, backend=self.backend)
-        attn_output = attn_output_t.view(batch_size, seq_len, n_embd)
+        attn_output = attn_output_t.contiguous().view(batch_size, seq_len, n_embd)
         print(f"attn_output shape (new): {attn_output.shape}")
         attn_flat = attn_output.contiguous().view(batch_size * seq_len, n_embd)
         output = self.out_projection(attn_flat)
