@@ -68,7 +68,7 @@ def test_multihead_attention_student(batch_size, queries_len, n_embd, num_heads,
 
     result.sum().backward()
 
-    print(X.grad)
+    print(X)
     np.testing.assert_allclose(X.grad.to_numpy(), x_grad, atol=1e-5, rtol=1e-5)
     np.testing.assert_allclose(layer.out_projection.weights.value.grad.to_numpy(), w_out_grad, atol=1e-5, rtol=1e-5)
     np.testing.assert_allclose(layer.q_projection.weights.value.grad.to_numpy(), w_q_grad, atol=1e-5, rtol=1e-5)
