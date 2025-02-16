@@ -72,7 +72,6 @@ class MultiHeadAttention(Module):
         x_flat = x.view(batch_size * seq_len, n_embd)
         ### BEGIN YOUR SOLUTION
         q = self.q_projection(x_flat).view(batch_size, self.n_head, seq_len, self.attn_hidden_dim)
-        k = self.k_projection(x_flat).view(batch_size, self.n_head, seq_len, self.attn_hidden_dim)
         v = self.v_projection(x_flat).view(batch_size, self.n_head, seq_len, self.attn_hidden_dim)
         kT = self.k_projection(x_flat).view(batch_size, self.n_head, seq_len, self.attn_hidden_dim)
         kT = kT.permute(0, 1, 3, 2)
@@ -134,10 +133,8 @@ class MultiHeadAttention(Module):
         attn_output = self.self_attention(q, kT, v, mask=mask)
         print(f"attn_output shape: {attn_output.shape}")
         # Concatenate heads and project
-        attn_output_numpy = attn_output.to_numpy()
-        attn_output_numpy_t = np.moveaxis(attn_output_numpy, -2, -3)
-        attn_output_t = tensor_from_numpy(attn_output_numpy_t, backend=self.backend, requires_grad=x.requires_grad())
-        attn_output = attn_output_t.contiguous().view(batch_size, seq_len, n_embd)
+        attn_output = attn_output.permute(0, 2, 1, 3)
+        attn_output = attn_output.view(batch_size, seq_len, n_embd)
         print(f"attn_output shape (new): {attn_output.shape}")
         attn_flat = attn_output.contiguous().view(batch_size * seq_len, n_embd)
         output = self.out_projection(attn_flat)
