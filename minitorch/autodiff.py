@@ -127,17 +127,12 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
 
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
-    grads = {}
     # BEGIN ASSIGN1_1
     def helper(var: Variable, curr_deriv):
         if var.is_constant():
             return
         if var.is_leaf():
-            # var.accumulate_derivative(curr_deriv)
-            if var.unique_id not in grads:  # Check if gradient is initialized for the variable
-                grads[var.unique_id] = 0.0  # Initialize to zero
-            grads[var.unique_id] += curr_deriv  # Now accumulate
-            var.accumulate_derivative(grads[var.unique_id])  # Accumulate into the variable.
+            var.accumulate_derivative(curr_deriv)
         else:
             parents = var.chain_rule(curr_deriv)
             for (parent, parent_grad) in parents:
