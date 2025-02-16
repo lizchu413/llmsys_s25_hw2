@@ -78,6 +78,10 @@ class MultiHeadAttention(Module):
         print(f"k_numpy shape: {k_numpy.shape}")
         k_numpy_t = np.moveaxis(k_numpy, -1, -2)
         kT = tensor_from_numpy(k_numpy_t, backend=self.backend)
+        print(f"x shape: {x.shape}")
+        print(f"Q shape: {q.shape}")
+        print(f"kT shape: {kT.shape}")
+        print(f"V shape: {v.shape}")
         ### END YOUR SOLUTION
         return q, kT, v
     
