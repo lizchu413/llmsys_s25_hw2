@@ -102,8 +102,9 @@ class MultiHeadAttention(Module):
         result = None
         
         ### BEGIN YOUR SOLUTION
+        print(mask)
         if mask is not None:
-            scores = mask * (q @ kT)
+            scores = (q @ kT) * mask
         else:
             scores = q @ kT
         scores = scores / (q_dim ** 0.5)
