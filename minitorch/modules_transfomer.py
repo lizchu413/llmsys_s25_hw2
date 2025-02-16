@@ -107,8 +107,6 @@ class MultiHeadAttention(Module):
         scores = self.dropout(scores)
         result = scores @ v
         result = result.view(batch_size, queries_len, num_head * q_dim)
-        print(f"result shape: {result.shape}")
-        print(f"^^ this should be ({batch_size}, {queries_len}, {num_head * q_dim})")
         ### END YOUR SOLUTION
 
         return result
@@ -136,7 +134,10 @@ class MultiHeadAttention(Module):
         attn_output = self.self_attention(q, kT, v)
         print(f"attn_output shape: {attn_output.shape}")
         # Concatenate heads and project
-        attn_output = attn_output.transpose(1, 2).contiguous().reshape(batch_size, seq_len, n_embd)
+        attn_output_numpy = attn_output.to_numpy()
+        attn_output_numpy_t = np.moveaxis(attn_output_numpy, -1, -2)
+        attn_output_t = tensor_from_numpy(attn_output_numpy_t, backend=self.backend)
+        attn_output = attn_output_t.view(batch_size, seq_len, n_embd)
         print(f"attn_output shape (new): {attn_output.shape}")
         output = self.out_projection(attn_output)
         print(f"out projection shape: {output.shape}")
