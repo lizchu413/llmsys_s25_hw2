@@ -30,6 +30,7 @@ def load_numpy_array(arr_path):
 # @pytest.mark.parametrize("queries_len", [32, 40])
 # @pytest.mark.parametrize("n_embd",      [64, 256])
 # @pytest.mark.parametrize("num_heads",   [1, 4, 8])
+# TODO: UNCOMMENT ABOVE
 @pytest.mark.parametrize("batch_size",  [1])
 @pytest.mark.parametrize("queries_len", [32])
 @pytest.mark.parametrize("n_embd",      [64])
