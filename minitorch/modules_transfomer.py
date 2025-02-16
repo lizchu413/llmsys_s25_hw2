@@ -129,7 +129,11 @@ class MultiHeadAttention(Module):
         q, kT, v = self.project_to_query_key_value(x)
         print(f"batch_size: {batch_size}, seq_len: {seq_len}, n_embd: {n_embd}")
         print(f"q shape: {q.shape}, kT shape: {kT.shape}, v {v.shape}")
-        attn_output = self.self_attention(q, kT, v, mask=self.create_causal_mask(seq_len))
+        if self.causal:
+            mask = self.create_causal_mask(seq_len)
+        else:
+            mask = None
+        attn_output = self.self_attention(q, kT, v, mask=mask)
         print(f"attn_output shape: {attn_output.shape}")
         # Concatenate heads and project
         attn_output_numpy = attn_output.to_numpy()
