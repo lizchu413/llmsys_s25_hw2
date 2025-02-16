@@ -139,10 +139,12 @@ class MultiHeadAttention(Module):
         attn_output_t = tensor_from_numpy(attn_output_numpy_t, backend=self.backend)
         attn_output = attn_output_t.view(batch_size, seq_len, n_embd)
         print(f"attn_output shape (new): {attn_output.shape}")
+        attn_flat = attn_output.view(batch_size * seq_len, n_embd)
         output = self.out_projection(attn_output)
         print(f"out projection shape: {output.shape}")
         output = self.dropout(output)
         print(f"out dropout shape: {output.shape}")
+        output = output.view(batch_size, seq_len, n_embd)
         return output
         ### END YOUR SOLUTION
 
