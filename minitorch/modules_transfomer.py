@@ -103,10 +103,9 @@ class MultiHeadAttention(Module):
         
         ### BEGIN YOUR SOLUTION
         if mask is not None:
-            scores = (q @ kT) + mask
+            scores = q @ kT / (q_dim ** 0.5) + mask
         else:
-            scores = q @ kT
-        scores = scores / (q_dim ** 0.5)
+            scores = q @ kT / (q_dim ** 0.5)
         scores = softmax(scores, dim=3)
         scores = self.dropout(scores)
         result = scores @ v
