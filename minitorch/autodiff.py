@@ -127,6 +127,7 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
 
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
+    deriv.setdefault()
     # BEGIN ASSIGN1_1
     def helper(var: Variable, curr_deriv):
         if var.is_constant():
