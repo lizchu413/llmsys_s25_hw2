@@ -143,8 +143,8 @@ class MultiHeadAttention(Module):
         attn_flat = attn_output.contiguous().view(batch_size * seq_len, n_embd)
         output = self.out_projection(attn_flat)
         print(f"out projection shape: {output.shape}")
-        # output = self.dropout(output)
-        # print(f"out dropout shape: {output.shape}")
+        output = self.dropout(output)
+        print(f"out dropout shape: {output.shape}")
         output = output.view(batch_size, seq_len, n_embd)
         return output
         ### END YOUR SOLUTION
