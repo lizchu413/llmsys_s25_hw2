@@ -80,7 +80,7 @@ class MultiHeadAttention(Module):
         ### END YOUR SOLUTION
         return q, kT, v
     
-    def self_attention(self, q, kT, v):
+    def self_attention(self, q, kT, v, mask=None):
         """Given q, kT, and v of sizes defined above, return the result of MultiHeadAttention as described in the writeup
         softmax((q @ kT) / sqrt(attn_hidden_dim)) @ V.
         NOTE: We have added support for Batch Matrix Multiplication with 4 dimensions.
@@ -102,7 +102,11 @@ class MultiHeadAttention(Module):
         result = None
         
         ### BEGIN YOUR SOLUTION
-        scores = q @ kT / (q_dim ** 0.5)
+        if mask is not None:
+            scores = mask * (q @ kT)
+        else:
+            scores = q @ kT
+        scores = scores / (q_dim ** 0.5)
         scores = softmax(scores, dim=3)
         scores = self.dropout(scores)
         result = scores @ v
@@ -124,14 +128,8 @@ class MultiHeadAttention(Module):
         ### BEGIN YOUR SOLUTION
         q, kT, v = self.project_to_query_key_value(x)
         print(f"batch_size: {batch_size}, seq_len: {seq_len}, n_embd: {n_embd}")
-        if self.causal:
-            mask = self.create_causal_mask(seq_len)
-            # print(f"shape of mask: {mask.shape}")
-            q = q * mask
-            # Returns a 1x1xTxT triangular causal mask for Q @ K^T (You will implicitly broadcast it to BxHxTxT)
-            pass
         print(f"q shape: {q.shape}, kT shape: {kT.shape}, v {v.shape}")
-        attn_output = self.self_attention(q, kT, v)
+        attn_output = self.self_attention(q, kT, v, mask=self.create_causal_mask(seq_len))
         print(f"attn_output shape: {attn_output.shape}")
         # Concatenate heads and project
         attn_output_numpy = attn_output.to_numpy()
