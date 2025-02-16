@@ -62,13 +62,13 @@ def test_multihead_attention_student(batch_size, queries_len, n_embd, num_heads,
     layer.v_projection.weights.value   = minitorch.tensor_from_numpy((w_v), backend=backend, requires_grad=True)
     layer.out_projection.weights.value = minitorch.tensor_from_numpy((w_out), backend=backend, requires_grad=True)
 
-    print(f"DEBUG shapes: {w_q.shape}, {w_k.shape}, {w_v.shape}, {w_out.shape}")
     result = layer(X)
 
     np.testing.assert_allclose(result.to_numpy(), result_, atol=1e-5, rtol=1e-5)
 
     result.sum().backward()
-    
+
+    print(X.grad)
     np.testing.assert_allclose(X.grad.to_numpy(), x_grad, atol=1e-5, rtol=1e-5)
     np.testing.assert_allclose(layer.out_projection.weights.value.grad.to_numpy(), w_out_grad, atol=1e-5, rtol=1e-5)
     np.testing.assert_allclose(layer.q_projection.weights.value.grad.to_numpy(), w_q_grad, atol=1e-5, rtol=1e-5)
