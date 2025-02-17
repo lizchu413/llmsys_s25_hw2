@@ -128,17 +128,13 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
     # BEGIN ASSIGN1_1
-    gradients = {var.unique_id: 0.0 for var in topological_sort(variable)}
     def helper(var: Variable, curr_deriv):
         if var.is_constant():
             return
         if var.is_leaf():
-            # Initialize gradient to 0.0 if it doesn't exist
-            gradients.setdefault(var.unique_id, 0.0)
-            gradients[var.unique_id] += curr_deriv  # Accumulate gradient
-            var.accumulate_derivative(gradients[var.unique_id])
+            var.accumulate_derivative(curr_deriv + 0.0)
         else:
-            parents = var.chain_rule(curr_deriv)
+            parents = var.chain_rule(curr_deriv + 0.0)
             for (parent, parent_grad) in parents:
                 helper(parent, parent_grad)
 
