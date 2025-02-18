@@ -78,7 +78,7 @@ class MultiHeadAttention(Module):
         ### END YOUR SOLUTION
         return q, kT, v
     
-    def self_attention(self, q, kT, v, mask=None):
+    def self_attention(self, q, kT, v):
         """Given q, kT, and v of sizes defined above, return the result of MultiHeadAttention as described in the writeup
         softmax((q @ kT) / sqrt(attn_hidden_dim)) @ V.
         NOTE: We have added support for Batch Matrix Multiplication with 4 dimensions.
@@ -100,12 +100,11 @@ class MultiHeadAttention(Module):
         result = None
         
         ### BEGIN YOUR SOLUTION
-        if mask is not None:
-            scores = q @ kT / (q_dim ** 0.5) + mask
+        if self.causal:
+            scores = q @ kT / (q_dim ** 0.5) + self.create_causal_mask(queries_len)
         else:
             scores = q @ kT / (q_dim ** 0.5)
         scores = softmax(scores, dim=3)
-        scores = self.dropout(scores)
         result = scores @ v
         result = result.view(batch_size, queries_len, num_head * q_dim)
         ### END YOUR SOLUTION
@@ -124,18 +123,11 @@ class MultiHeadAttention(Module):
         batch_size, seq_len, n_embd = x.shape
         ### BEGIN YOUR SOLUTION
         q, kT, v = self.project_to_query_key_value(x)
-        if self.causal:
-            mask = self.create_causal_mask(seq_len)
-        else:
-            mask = None
-        attn_output = self.self_attention(q, kT, v, mask=mask)
-        # Concatenate heads and project
-        attn_output = attn_output.permute(1, 0, 2)
-
+        attn_output = self.self_attention(q, kT, v)
         attn_flat = attn_output.contiguous().view(batch_size * seq_len, n_embd)
         output = self.out_projection(attn_flat)
-        output = self.dropout(output)
         output = output.view(batch_size, seq_len, n_embd)
+        output = self.dropout(output)
         return output
         ### END YOUR SOLUTION
 
