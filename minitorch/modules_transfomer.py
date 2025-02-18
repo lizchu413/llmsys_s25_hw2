@@ -106,7 +106,7 @@ class MultiHeadAttention(Module):
             scores = q @ kT / (q_dim ** 0.5)
         scores = softmax(scores, dim=3)
         result = scores @ v
-        result = result.view(batch_size, queries_len, num_head * q_dim)
+        result = result.permute(0, 2, 1, 3).view(batch_size, queries_len, num_head * q_dim)
         ### END YOUR SOLUTION
 
         return result
