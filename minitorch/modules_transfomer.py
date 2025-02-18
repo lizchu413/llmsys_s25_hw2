@@ -101,9 +101,9 @@ class MultiHeadAttention(Module):
         
         ### BEGIN YOUR SOLUTION
         if self.causal:
-            scores = q @ kT / (q_dim ** 0.5) + self.create_causal_mask(queries_len)
+            scores = q @ kT / np.sqrt(self.attn_hidden_dim) + self.create_causal_mask(queries_len)
         else:
-            scores = q @ kT / (q_dim ** 0.5)
+            scores = q @ kT / np.sqrt(self.attn_hidden_dim)
         scores = softmax(scores, dim=3)
         result = scores @ v
         result = result.permute(0, 2, 1, 3).view(batch_size, queries_len, num_head * q_dim)
