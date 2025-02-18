@@ -143,8 +143,7 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
         else:
             parents = node.chain_rule(curr_deriv)
             for (parent, parent_grad) in parents:
-                derivs.setdefault(parent.unique_id, 0.0)
-                derivs[parent.unique_id] += parent_grad
+                derivs[parent.unique_id] = derivs.setdefault(parent.unique_id, 0.0) + parent_grad
     # def helper(var: Variable, curr_deriv):
     #     if var.is_constant():
     #         return
