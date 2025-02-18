@@ -128,17 +128,34 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
     # BEGIN ASSIGN1_1
-    def helper(var: Variable, curr_deriv):
-        if var.is_constant():
-            return
-        if var.is_leaf():
-            var.accumulate_derivative(curr_deriv + 0.0)
-        else:
-            parents = var.chain_rule(curr_deriv + 0.0)
-            for (parent, parent_grad) in parents:
-                helper(parent, parent_grad)
 
-    helper(variable, deriv)
+    # instead of using dfs again, use toposort
+    nodes = topological_sort(variable)
+    derivs = {}
+    derivs[variable.unique_id] = deriv
+
+    for node in nodes:
+        curr_deriv = derivs[node.unique_id]
+        if node.is_constant():
+            continue
+        elif node.is_leaf():
+            node.accumulate_derivative(curr_deriv)
+        else:
+            parents = node.chain_rule(curr_deriv)
+            for (parent, parent_grad) in parents:
+                derivs.setdefault(parent.unique_id, 0.0)
+                derivs[parent.unique_id] += parent_grad
+    # def helper(var: Variable, curr_deriv):
+    #     if var.is_constant():
+    #         return
+    #     if var.is_leaf():
+    #         var.accumulate_derivative(curr_deriv + 0.0)
+    #     else:
+    #         parents = var.chain_rule(curr_deriv + 0.0)
+    #         for (parent, parent_grad) in parents:
+    #             helper(parent, parent_grad)
+    #
+    # helper(variable, deriv)
     # END ASSIGN1_1
 
 
