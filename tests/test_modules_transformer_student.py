@@ -30,6 +30,7 @@ def load_numpy_array(arr_path):
 @pytest.mark.parametrize("queries_len", [32, 40])
 @pytest.mark.parametrize("n_embd",      [64, 256])
 @pytest.mark.parametrize("num_heads",   [1, 4, 8])
+@pytest.mark.parametrize("p_dropout",   [0.0])
 @pytest.mark.parametrize("backend", _BACKENDS, ids=["CudaKernelOps"])
 def test_multihead_attention_student(batch_size, queries_len, n_embd, num_heads, p_dropout, backend):
     test_dir = f'./tests/data/multihead_attention'
