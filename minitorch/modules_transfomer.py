@@ -258,16 +258,19 @@ class DecoderLM(Module):
         self.n_embd              = n_embd
         self.n_vocab             = n_vocab
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError
-        # self.token_embeddings    = 
-        # self.position_embeddings = 
-        # self.t_layer_1           = 
-        # self.t_layer_2           = 
-        # self.t_layer_3           = 
-        # self.t_layer_4           = 
-        # self.dropout             = 
-        # self.ln                  = 
-        # self.lm_head             = 
+        self.token_embeddings    = Embedding(n_vocab, n_embd, backend=backend)
+        self.position_embeddings = Embedding(n_positions, n_embd, backend=backend)
+        self.t_layer_1           = TransformerLayer(n_embd, n_head, p_dropout=p_dropout,
+                                                    ln_eps=ln_eps, bias=bias, backend=backend)
+        self.t_layer_2           = TransformerLayer(n_embd, n_head, p_dropout=p_dropout,
+                                                    ln_eps=ln_eps, bias=bias, backend=backend)
+        self.t_layer_3           = TransformerLayer(n_embd, n_head, p_dropout=p_dropout,
+                                                    ln_eps=ln_eps, bias=bias, backend=backend)
+        self.t_layer_4           = TransformerLayer(n_embd, n_head, p_dropout=p_dropout,
+                                                    ln_eps=ln_eps, bias=bias, backend=backend)
+        self.dropout             = Dropout(p_dropout)
+        self.ln                  = LayerNorm1d(n_embd, eps=ln_eps, backend=backend)
+        self.lm_head             = Linear(n_embd, n_vocab, bias=bias, backend=backend)
         ### END YOUR SOLUTION
     
     def forward(self, idx):
@@ -282,15 +285,28 @@ class DecoderLM(Module):
         batch_size, seq_len = idx.shape
 
         ### BEGIN SOLUTION
-        raise NotImplementedError
         # Get Token Embeddings of shape (batch_size, seq_len, n_embd)
+        token_embeddings = self.token_embeddings(idx)
         """
         Create Positional Embeddings of shape (1, seq_len, n_embd)
          - First create a tensor of position ids [0, 1, 2, ..., seq_len - 1] of shape (1, seq_len)
          - Pass the position ids through your positional embedding layer
          - Ensure shape is (1, seq_len, n_embd)
         """
+        position_ids = tensor_from_numpy(np.arange(seq_len).reshape((1, -1)), backend=self.backend)
+        position_embeddings = self.position_embeddings(position_ids)
+        assert position_embeddings.shape == (1, seq_len, self.n_embd)
+        x = token_embeddings + position_embeddings
+        x = self.dropout(x)
         # Pass through each transformer Layer
+        x = self.t_layer_1(x)
+        x = self.t_layer_2(x)
+        x = self.t_layer_3(x)
+        x = self.t_layer_4(x)
         # Final LayerNorm
+        x = self.ln(x.view(batch_size * seq_len, self.n_embd))
+        x = self.lm_head(x)
         # Get correct shape
+        x = x.view(batch_size, seq_len, self.n_vocab)
+        return x
         ### END SOLUTION
