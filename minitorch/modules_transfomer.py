@@ -192,11 +192,10 @@ class TransformerLayer(Module):
             ff : FeedForward layer
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError
         self.ln_1 = LayerNorm1d(n_embd, eps=ln_eps, backend=backend)
         self.ln_2 = LayerNorm1d(n_embd, eps=ln_eps, backend=backend)
         self.attention = MultiHeadAttention(n_head, p_dropout, bias=bias, backend=backend)
-        self.ff = FeedForward(n_embd, middle_dim, p_dropout, bias=bias, backend=backend)
+        self.ff = FeedForward(n_embd, n_embd, p_dropout, bias=bias, backend=backend)
         ### END YOUR SOLUTION
 
     def forward(self, x):
