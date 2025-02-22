@@ -193,10 +193,10 @@ class TransformerLayer(Module):
         """
         ### BEGIN YOUR SOLUTION
         raise NotImplementedError
-        # self.ln_1
-        # self.ln_2
-        # self.attention
-        # self.ff
+        self.ln_1 = LayerNorm1d(n_embd, eps=ln_eps, backend=backend)
+        self.ln_2 = LayerNorm1d(n_embd, eps=ln_eps, backend=backend)
+        self.attention = MultiHeadAttention(n_head, p_dropout, bias=bias, backend=backend)
+        self.ff = FeedForward(n_embd, middle_dim, p_dropout, bias=bias, backend=backend)
         ### END YOUR SOLUTION
 
     def forward(self, x):
@@ -210,7 +210,13 @@ class TransformerLayer(Module):
         """
         batch_size, seq_len, n_embd = x.shape
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError
+        x_norm = self.ln_1(x.view(batch_size * seq_len, n_embd)).view(batch_size, seq_len, n_embd)
+        attn_output = self.attention(x_norm)
+        x = x + attn_output
+        x_norm = self.ln_2(x.view(batch_size * seq_len, n_embd)).view(batch_size, seq_len, n_embd)
+        ff_output = self.ff(x_norm)
+        output = x + ff_output
+        return output
         ### END YOUR SOLUTION
 
 
